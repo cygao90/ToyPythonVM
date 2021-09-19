@@ -3,8 +3,8 @@ Project(ToyPythonVM)
 
 set(CMAKE_CXX_STANDARD 11)
 
-FILE(GLOB SOURCE "${CMAKE_SOURCE_DIR}/src/*.cpp")
+aux_source_directory("${PROJECT_SOURCE_DIR}/src" SOURCE)
 
-INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/include")
+INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/include")
 
-add_executable(ToyPythonVM ${SOURCE} ${INCLUDE_DIRECTORIES})
+add_executable(ToyPythonVM main.cpp ${SOURCE})
