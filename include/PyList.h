@@ -6,7 +6,7 @@
 using std::vector;
 
 template<typename T>
-class List {
+class PyList {
 private:
     vector<T> _array;
 public:
@@ -20,37 +20,37 @@ public:
 };
 
 template<typename T>
-void List<T>::add(T t) {
+void PyList<T>::add(T t) {
     _array.push_back(t);
 }
 
 template<typename T>
-void List<T>::insert(int index, T t) {
+void PyList<T>::insert(int index, T t) {
     _array.insert(_array.begin() + index, t);
 }
 
 template<typename T>
-T List<T>::get(int index) {
+T PyList<T>::get(int index) {
     return _array.at(index);
 }
 
 template<typename T>
-void List<T>::set(int index, T t) {
+void PyList<T>::set(int index, T t) {
     _array.at(index) = t;
 }
 
 template<typename T>
-int List<T>::size() {
+int PyList<T>::size() {
     return _array.size();
 }
 
 template<typename T>
-int List<T>::length() {
+int PyList<T>::length() {
     return _array.capacity();
 }
 
 template<typename T>
-T List<T>::pop() {
+T PyList<T>::pop() {
     T t = _array.back();
     _array.pop_back();
     return t;

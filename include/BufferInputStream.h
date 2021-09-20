@@ -32,7 +32,7 @@ public:
         }
     }
 
-    int read_magic() {
+    int read_int() {
         int b1 = read() & 0xFF;
         int b2 = read() & 0xFF;
         int b3 = read() & 0xFF;
