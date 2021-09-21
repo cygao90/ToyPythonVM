@@ -145,7 +145,7 @@ PyList<PyObject*>* BinaryFileParser::get_tuple(bool is_small) {
     }
 
     PyString* str;
-    PyList<PyObject*>* list = new PyList<PyObject*>[length];
+    PyList<PyObject*>* list = new PyList<PyObject*>();
     for (int i = 0; i < length; i++) {
         char code = file_stream->read();
         char obj_type = code & ~FLAG_REF;
