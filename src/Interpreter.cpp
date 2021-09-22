@@ -6,6 +6,9 @@
 
 using std::cout;
 
+#define PUSH(x)  _stack->add((x))
+#define POP()    _stack->pop()
+
 void Interpreter::run(CodeObject* codes) {
     int pc = 0;
     int code_length = codes->co_code->length();
@@ -25,11 +28,11 @@ void Interpreter::run(CodeObject* codes) {
         }
 
         PyInteger* lhs, *rhs;
-        PyObject* v, *w, *u, *attr;        
+        PyObject* v, *w, *u, *attr; // tmp vars
 
         switch (op_code) {
         case LOAD_CONST: {
-            _stack->add(_consts->get(op_arg));
+            PUSH(_consts->get(op_arg));
             cout << "LOAD_CONST " << _consts->get(op_arg) << "\n"; 
             break;
         }
@@ -51,7 +54,58 @@ void Interpreter::run(CodeObject* codes) {
         case RETURN_VALUE:
             cout << "return value\n";
             break;
+
+        case COMPARE_OP:
+            cout << "compare op\n";
+            w = POP(); // right
+            v = POP(); // left
+            
+            switch (op_arg) {
+            case cmp_op::PyCmp_LT:
+                cout << "lt\n";
+                PUSH(v->lt(w));
+                break;
+
+            case cmp_op::PyCmp_LE:
+                cout << "le\n";
+                PUSH(v->le(w));
+                break;
+
+            case cmp_op::PyCmp_EQ:
+                cout << "eq\n";
+                PUSH(v->eq(w));
+                break;
+
+            case cmp_op::PyCmp_NE:
+                cout << "ne\n";
+                PUSH(v->ne(w));
+                break;
+
+            case cmp_op::PyCmp_GT:
+                cout << "gt\n";
+                PUSH(v->gt(w));
+                break;
+
+            case cmp_op::PyCmp_GE:
+                cout << "ge\n";
+                PUSH(v->ge(w));
+                break;
+            }
+            break;
         
+        case POP_JUMP_IF_FALSE:
+            cout << "jump if false" << op_arg << "\n";
+            v = POP();
+            if (((PyInteger*)v)->value() == 0) {
+                pc += op_arg;
+            }
+            break;
+
+        case JUMP_FORWARD:
+            cout << "jump forward\n";
+            pc += op_arg;
+            break;
+
         default:
             cout << "Not implemented\n";
             exit(-1);

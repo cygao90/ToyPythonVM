@@ -1,1 +1,6 @@
-print(1,2,3, "123213")
+if 1 < 2:
+    print(1)
+else:
+    print(2)
+    
+print(3)

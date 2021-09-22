@@ -10,6 +10,12 @@ private:
 public:
     PyInteger(int value) : _value(value) {}
     int value() { return _value; }
+    PyObject* lt(PyObject* x);
+    PyObject* le(PyObject* x);
+    PyObject* eq(PyObject* x);
+    PyObject* ne(PyObject* x);
+    PyObject* gt(PyObject* x);
+    PyObject* ge(PyObject* x);
 };
 
 #endif
