@@ -2,6 +2,7 @@
 #include <assert.h>
 #include "BinaryFileParser.h"
 #include "PyInteger.h"
+#include "Universe.h"
 
 #define TYPE_NULL               '0'
 #define TYPE_NONE               'N'
@@ -161,7 +162,7 @@ PyList<PyObject*>* BinaryFileParser::get_tuple(bool is_small) {
             break;
 
         case TYPE_NONE:
-            list->add(NULL);
+            list->add(Universe::Py_None);
             break;
 
         case TYPE_INTERNED:
