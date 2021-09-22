@@ -2,13 +2,13 @@
 #define INTERPRETER_H
 
 #include "CodeObject.h"
+#include "FrameObject.h"
 
 class Interpreter {
 private:
-    PyList<PyObject*>* _stack;
-    PyList<PyObject*>* _consts;
-
+    FrameObject* _frame;
 public:
+    Interpreter();
     void run(CodeObject* codes);
 };
 

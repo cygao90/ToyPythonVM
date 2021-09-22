@@ -2,61 +2,69 @@
 #include "opcode.h"
 #include "PyInteger.h"
 #include "PyObject.h"
+#include "Universe.h"
 #include <iostream>
 
 using std::cout;
+using std::cerr;
 
-#define PUSH(x)  _stack->add((x))
-#define POP()    _stack->pop()
+#define PUSH(x)  _frame->stack()->add((x))
+#define POP()    _frame->stack()->pop()
 
-void Interpreter::run(CodeObject* codes) {
-    int pc = 0;
-    int code_length = codes->co_code->length();
+Interpreter::Interpreter() {
 
-    _stack = new PyList<PyObject*>();
-    _consts = codes->co_consts;
+}
 
-    while (pc < code_length) {
-        u_char op_code = codes->co_code->value()[pc++];
-        bool has_argument = HAS_ARG(op_code);
+void Interpreter::run(CodeObject* _codes) {
 
-        u_char op_arg = -1;
-        if (has_argument) {
-            op_arg = codes->co_code->value()[pc++];
-        } else {
-            pc++;
-        }
+    _frame = new FrameObject(_codes);
+
+    while (_frame->has_more_codes()) {
+        unsigned char op_code = _frame->get_op_code();
+        unsigned char op_arg  = _frame->get_op_arg();
 
         PyInteger* lhs, *rhs;
         PyObject* v, *w, *u, *attr; // tmp vars
 
         switch (op_code) {
-        case LOAD_CONST: {
-            PUSH(_consts->get(op_arg));
-            cout << "LOAD_CONST " << _consts->get(op_arg) << "\n"; 
+        case LOAD_CONST:
+            PUSH(_frame->consts()->get(op_arg));
+            cout << "LOAD_CONST ";
+            _frame->consts()->get(op_arg)->get_value(); 
             break;
-        }
 
-        case LOAD_NAME: {
-            PyObject* name = codes->co_names->get(op_arg);
-            cout << "LOAD_NAME " << ((PyString*)name)->value() << "\n";
+        case LOAD_NAME:
+            v = _frame->names()->get(op_arg);
+            w = _frame->locals()->get(v);
+            if (w == Universe::Py_None) {
+                cerr << "no locals when loading name\n";
+            }
+            PUSH(w);
+            cout << "LOAD_NAME ";
+            v->get_value();
             break;
-        }
+
+        case STORE_NAME:
+            v = _frame->names()->get(op_arg);
+            _frame->locals()->insert(v, POP());
+            cout << "STORE_NAME ";
+            v->get_value();
+            break;
 
         case CALL_FUNCTION:
-            cout << "Call function\n";
+            cout << "Call function \n";
             break;
 
         case POP_TOP:
-            cout << "pop top\n";
+            cout << "pop top \n";
             break;
 
         case RETURN_VALUE:
-            cout << "return value\n";
+            cout << "return value \n";
             break;
 
         case COMPARE_OP:
-            cout << "compare op\n";
+            cout << "compare op ";
             w = POP(); // right
             v = POP(); // left
             
@@ -96,18 +104,29 @@ void Interpreter::run(CodeObject* codes) {
         case POP_JUMP_IF_FALSE:
             cout << "jump if false" << op_arg << "\n";
             v = POP();
-            if (((PyInteger*)v)->value() == 0) {
-                pc += op_arg;
+            if (v == Universe::Py_False) {
+                _frame->set_pc(op_arg);
             }
             break;
 
         case JUMP_FORWARD:
             cout << "jump forward\n";
-            pc += op_arg;
+            _frame->set_pc(_frame->get_pc() + op_arg);
+            break;
+
+        case JUMP_ABSOLUTE:
+            _frame->set_pc(op_arg);
+            cout << "jump absolute\n\n";
+            break;
+
+        case BINARY_ADD:
+            v = POP();
+            w = POP();
+            PUSH(v->add(w));
             break;
 
         default:
-            cout << "Not implemented\n";
+            cerr << "Not implemented\n";
             exit(-1);
         }
     }

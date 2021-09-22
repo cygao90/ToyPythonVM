@@ -8,6 +8,9 @@ private:
     int _value;
 
 public:
+
+    void get_value() { std::cout << _value << "\n"; }
+
     PyInteger(int value) : _value(value) {}
     int value() { return _value; }
     PyObject* lt(PyObject* x);
@@ -16,6 +19,7 @@ public:
     PyObject* ne(PyObject* x);
     PyObject* gt(PyObject* x);
     PyObject* ge(PyObject* x);
+    PyObject* add(PyObject* x);
 };
 
 #endif

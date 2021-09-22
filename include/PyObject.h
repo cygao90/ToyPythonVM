@@ -6,6 +6,12 @@
 class PyObject {
 public:
 
+    /* tmp */
+    virtual void get_value() {}
+    /* tmp */
+
+    virtual PyObject* add(PyObject* x) { return NULL; }
+
     virtual PyObject* lt(PyObject* x) { return NULL; }
     virtual PyObject* le(PyObject* x) { return NULL; }
     virtual PyObject* eq(PyObject* x) { return NULL; }

@@ -11,6 +11,9 @@ private:
     string _value;
 
 public:
+
+    void get_value() { std::cout << _value << "\n"; }
+
     PyString(const string s) : _value(s) {}
 
     string& value() { return _value; } 
