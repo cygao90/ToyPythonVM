@@ -1,27 +1,37 @@
 #ifndef PY_OBJECT_H
 #define PY_OBJECT_H
 
-#include <iostream>
+#include <assert.h>
+#include "Klass.h"
 
 class PyObject {
+private:
+    Klass* _klass;
+
 public:
+    Klass* klass() { assert(_klass != NULL); return _klass; }
+    void set_klass(Klass* x) { _klass = x; }
 
     /* tmp */
     virtual void get_value() {}
     /* tmp */
 
-    virtual PyObject* add(PyObject* x) { return NULL; }
+    PyObject* add(PyObject* x); 
+    PyObject* sub(PyObject* x); 
+    PyObject* mul(PyObject* x); 
+    PyObject* div(PyObject* x); 
+    PyObject* mod(PyObject* x); 
 
-    virtual PyObject* lt(PyObject* x) { return NULL; }
-    virtual PyObject* le(PyObject* x) { return NULL; }
-    virtual PyObject* eq(PyObject* x) { return NULL; }
-    virtual PyObject* ne(PyObject* x) { return NULL; }
-    virtual PyObject* gt(PyObject* x) { return NULL; }
-    virtual PyObject* ge(PyObject* x) { return NULL; }
-    virtual PyObject* in(PyObject* x) { return NULL; }
-    virtual PyObject* not_in(PyObject* x) { return NULL; }
-    virtual PyObject* is(PyObject* x) { return NULL; }
-    virtual PyObject* is_not(PyObject* x) { return NULL; }
+    PyObject* lt(PyObject* x); 
+    PyObject* le(PyObject* x); 
+    PyObject* eq(PyObject* x); 
+    PyObject* ne(PyObject* x); 
+    PyObject* gt(PyObject* x); 
+    PyObject* ge(PyObject* x); 
+    PyObject* in(PyObject* x); 
+    PyObject* not_in(PyObject* x); 
+    PyObject* is(PyObject* x); 
+    PyObject* is_not(PyObject* x); 
 };
 
 #endif

@@ -3,6 +3,29 @@
 
 #include "PyObject.h"
 
+class IntegerKlass : public Klass {
+private:
+    IntegerKlass();
+    static IntegerKlass* _instance;
+
+public:
+    static IntegerKlass* get_instance();
+    void initialize();
+
+    virtual PyObject* add(PyObject* x, PyObject* y);    
+    virtual PyObject* sub(PyObject* x, PyObject* y);    
+    virtual PyObject* mul(PyObject* x, PyObject* y);    
+    virtual PyObject* div(PyObject* x, PyObject* y);    
+    virtual PyObject* mod(PyObject* x, PyObject* y);    
+
+    virtual PyObject* lt(PyObject* x, PyObject* y);     
+    virtual PyObject* le(PyObject* x, PyObject* y);     
+    virtual PyObject* eq(PyObject* x, PyObject* y);     
+    virtual PyObject* ne(PyObject* x, PyObject* y);     
+    virtual PyObject* gt(PyObject* x, PyObject* y);     
+    virtual PyObject* ge(PyObject* x, PyObject* y);     
+};
+
 class PyInteger : public PyObject {
 private:
     int _value;
@@ -11,15 +34,9 @@ public:
 
     void get_value() { std::cout << _value << "\n"; }
 
-    PyInteger(int value) : _value(value) {}
+    PyInteger(int value); 
     int value() { return _value; }
-    PyObject* lt(PyObject* x);
-    PyObject* le(PyObject* x);
-    PyObject* eq(PyObject* x);
-    PyObject* ne(PyObject* x);
-    PyObject* gt(PyObject* x);
-    PyObject* ge(PyObject* x);
-    PyObject* add(PyObject* x);
+    
 };
 
 #endif

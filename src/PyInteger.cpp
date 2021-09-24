@@ -1,54 +1,197 @@
 #include "PyInteger.h"
 #include "Universe.h"
 
-PyObject* PyInteger::lt(PyObject* x) {
-    if (_value < ((PyInteger*)x)->_value) {
+IntegerKlass* IntegerKlass::_instance = NULL;
+
+IntegerKlass::IntegerKlass() {
+
+}
+
+IntegerKlass* IntegerKlass::get_instance() {
+    if (_instance == NULL) {
+        _instance = new IntegerKlass();
+    }
+    return _instance;
+}
+
+PyInteger::PyInteger(int value) : _value(value) {
+    set_klass(IntegerKlass::get_instance());
+}
+
+PyObject* IntegerKlass::lt(PyObject* x, PyObject* y) {
+    if (x->klass() != y->klass()) {
+        return Universe::Py_False;
+    }
+
+    PyInteger* ix = (PyInteger*)x;
+    PyInteger* iy = (PyInteger*)y;
+
+    assert(ix && (ix->klass() == (Klass*)this));
+    assert(iy && (iy->klass() == (Klass*)this));
+
+    if (ix->value() < iy->value()) {
         return Universe::Py_True;
     } else {
         return Universe::Py_False;
     }
 }
 
-PyObject* PyInteger::le(PyObject* x) {
-    if (_value <= ((PyInteger*)x)->_value) {
+PyObject* IntegerKlass::le(PyObject* x, PyObject* y) {
+    if (x->klass() != y->klass()) {
+        return Universe::Py_False;
+    }
+
+    PyInteger* ix = (PyInteger*)x;
+    PyInteger* iy = (PyInteger*)y;
+
+    assert(ix && (ix->klass() == (Klass*)this));
+    assert(iy && (iy->klass() == (Klass*)this));
+
+    if (ix->value() <= iy->value()) {
         return Universe::Py_True;
     } else {
         return Universe::Py_False;
     }
 }
 
-PyObject* PyInteger::eq(PyObject* x) {
-    if (_value == ((PyInteger*)x)->_value) {
+PyObject* IntegerKlass::eq(PyObject* x, PyObject* y) {
+    if (x->klass() != y->klass()) {
+        return Universe::Py_False;
+    }
+
+    PyInteger* ix = (PyInteger*)x;
+    PyInteger* iy = (PyInteger*)y;
+
+    assert(ix && (ix->klass() == (Klass*)this));
+    assert(iy && (iy->klass() == (Klass*)this));
+
+    if (ix->value() == iy->value()) {
         return Universe::Py_True;
     } else {
         return Universe::Py_False;
-    }
+    }    
 }
 
-PyObject* PyInteger::ne(PyObject* x) {
-    if (_value != ((PyInteger*)x)->_value) {
+PyObject* IntegerKlass::ne(PyObject* x, PyObject* y) {
+    if (x->klass() != y->klass()) {
+        return Universe::Py_False;
+    }
+
+    PyInteger* ix = (PyInteger*)x;
+    PyInteger* iy = (PyInteger*)y;
+
+    assert(ix && (ix->klass() == (Klass*)this));
+    assert(iy && (iy->klass() == (Klass*)this));
+
+    if (ix->value() != iy->value()) {
         return Universe::Py_True;
     } else {
         return Universe::Py_False;
-    }
+    }   
 }
 
-PyObject* PyInteger::gt(PyObject* x) {
-    if (_value > ((PyInteger*)x)->_value) {
+PyObject* IntegerKlass::gt(PyObject* x, PyObject* y) {
+    if (x->klass() != y->klass()) {
+        return Universe::Py_False;
+    }
+
+    PyInteger* ix = (PyInteger*)x;
+    PyInteger* iy = (PyInteger*)y;
+
+    assert(ix && (ix->klass() == (Klass*)this));
+    assert(iy && (iy->klass() == (Klass*)this));
+
+    if (ix->value() > iy->value()) {
         return Universe::Py_True;
     } else {
         return Universe::Py_False;
-    }
+    }    
 }
 
-PyObject* PyInteger::ge(PyObject* x) {
-    if (_value >= ((PyInteger*)x)->_value) {
+PyObject* IntegerKlass::ge(PyObject* x, PyObject* y) {
+    if (x->klass() != y->klass()) {
+        return Universe::Py_False;
+    }
+
+    PyInteger* ix = (PyInteger*)x;
+    PyInteger* iy = (PyInteger*)y;
+
+    assert(ix && (ix->klass() == (Klass*)this));
+    assert(iy && (iy->klass() == (Klass*)this));
+
+    if (ix->value() >= iy->value()) {
         return Universe::Py_True;
     } else {
         return Universe::Py_False;
-    }
+    }   
 }
 
-PyObject* PyInteger::add(PyObject* x) {
-    return new PyInteger(_value + ((PyInteger*)x)->_value);
-}
+PyObject* IntegerKlass::add(PyObject* x, PyObject* y) {
+    if (x->klass() != y->klass()) {
+        return Universe::Py_False;
+    }
+
+    PyInteger* ix = (PyInteger*)x;
+    PyInteger* iy = (PyInteger*)y;
+
+    assert(ix && (ix->klass() == (Klass*)this));
+    assert(iy && (iy->klass() == (Klass*)this));
+
+    return new PyInteger(ix->value() + iy->value());
+} 
+
+PyObject* IntegerKlass::sub(PyObject* x, PyObject* y) {
+    if (x->klass() != y->klass()) {
+        return Universe::Py_False;
+    }
+
+    PyInteger* ix = (PyInteger*)x;
+    PyInteger* iy = (PyInteger*)y;
+
+    assert(ix && (ix->klass() == (Klass*)this));
+    assert(iy && (iy->klass() == (Klass*)this));
+
+    return new PyInteger(ix->value() - iy->value());
+} 
+
+PyObject* IntegerKlass::mul(PyObject* x, PyObject* y) {
+    if (x->klass() != y->klass()) {
+        return Universe::Py_False;
+    }
+
+    PyInteger* ix = (PyInteger*)x;
+    PyInteger* iy = (PyInteger*)y;
+
+    assert(ix && (ix->klass() == (Klass*)this));
+    assert(iy && (iy->klass() == (Klass*)this));
+
+    return new PyInteger(ix->value() * iy->value());
+} 
+
+PyObject* IntegerKlass::div(PyObject* x, PyObject* y) {
+    if (x->klass() != y->klass()) {
+        return Universe::Py_False;
+    }
+
+    PyInteger* ix = (PyInteger*)x;
+    PyInteger* iy = (PyInteger*)y;
+
+    assert(ix && (ix->klass() == (Klass*)this));
+    assert(iy && (iy->klass() == (Klass*)this));
+
+    return new PyInteger(ix->value() / iy->value());
+} 
+
+PyObject* IntegerKlass::mod(PyObject* x, PyObject* y) {
+    if (x->klass() != y->klass()) {
+        return Universe::Py_False;
+    }
+
+    PyInteger* ix = (PyInteger*)x;
+    PyInteger* iy = (PyInteger*)y;
+
+    assert(ix && (ix->klass() == (Klass*)this));
+    assert(iy && (iy->klass() == (Klass*)this));
+
+    return new PyInteger(ix->value() % iy->value());
+} 
