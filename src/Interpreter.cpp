@@ -2,6 +2,7 @@
 #include "opcode.h"
 #include "PyInteger.h"
 #include "PyObject.h"
+#include "FunctionObject.h"
 #include "Universe.h"
 #include <iostream>
 
@@ -25,12 +26,13 @@ void Interpreter::run(CodeObject* _codes) {
 
         PyInteger* lhs, *rhs;
         PyObject* v, *w, *u, *attr; // tmp vars
+        FunctionObject* fo;
 
         switch (op_code) {
         case LOAD_CONST:
             PUSH(_frame->consts()->get(op_arg));
             cout << "LOAD_CONST ";
-            _frame->consts()->get(op_arg)->get_value(); 
+            _frame->consts()->get(op_arg)->print(); 
             break;
 
         case LOAD_NAME:
@@ -41,14 +43,14 @@ void Interpreter::run(CodeObject* _codes) {
             }
             PUSH(w);
             cout << "LOAD_NAME ";
-            v->get_value();
+            v->print();
             break;
 
         case STORE_NAME:
             v = _frame->names()->get(op_arg);
             _frame->locals()->insert(v, POP());
             cout << "STORE_NAME ";
-            v->get_value();
+            v->print();
             break;
 
         case CALL_FUNCTION:
@@ -123,6 +125,12 @@ void Interpreter::run(CodeObject* _codes) {
             v = POP();
             w = POP();
             PUSH(v->add(w));
+            break;
+
+        case MAKE_FUNCTION:
+            v = POP();
+            fo = new FunctionObject(v);
+            PUSH(fo);
             break;
 
         default:

@@ -13,7 +13,7 @@ public:
     void set_klass(Klass* x) { _klass = x; }
 
     /* tmp */
-    virtual void get_value() {}
+    virtual void print() {}
     /* tmp */
 
     PyObject* add(PyObject* x); 

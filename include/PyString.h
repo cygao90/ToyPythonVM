@@ -31,7 +31,7 @@ private:
 
 public:
 
-    void get_value() { std::cout << _value << "\n"; }
+    void print() { std::cout << _value << "\n"; }
 
     PyString(const string s);
 

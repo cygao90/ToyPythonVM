@@ -43,6 +43,11 @@
 #define WFERR_NESTEDTOODEEP 2
 #define WFERR_NOMEMORY 3
 
+#define R_REF(O) do {\
+    if (flag) \
+        get_ref(O);\
+} while(0)
+
 CodeObject* BinaryFileParser::parse() {
     int magic_number = file_stream->read_int();
     printf("The magic number is: %x\n", magic_number);
@@ -109,153 +114,118 @@ CodeObject* BinaryFileParser::get_code_object() {
 
 PyString* BinaryFileParser::get_byte_codes() {
     assert(file_stream->read() == TYPE_STRING);
-
-    return get_string();
+    int n = file_stream->read_int();
+    return get_string(n);
 }
 
-PyString* BinaryFileParser::get_string() {
-    int length = file_stream->read_int();
-    string str_value;
-
-    for (int i = 0; i < length; i++) {
-        str_value.push_back(file_stream->read());
-    }
-
-    PyString* s = new PyString(str_value);
-    return s;
-}
-
-PyList<PyObject*>* BinaryFileParser::get_consts() {
-    int type = file_stream->read();
-    if (type == TYPE_TUPLE) {
-        return get_tuple(false);
-    } else if (type == TYPE_SMALL_TUPLE) {
-        return get_tuple(true);
-    }
-
-    file_stream->unread();
-    return NULL;
-}
-
-PyList<PyObject*>* BinaryFileParser::get_tuple(bool is_small) {
-    int length;
-    if (is_small) {
-        length = file_stream->read();
-    } else {
-        length = file_stream->read_int();
-    }
+PyObject* BinaryFileParser::get_object() {
 
     PyString* str;
-    PyList<PyObject*>* list = new PyList<PyObject*>();
-    for (int i = 0; i < length; i++) {
-        char code = file_stream->read();
-        char obj_type = code & ~FLAG_REF;
-        switch (obj_type) {
+    PyObject* retval;
+   
+    char code = file_stream->read();
+    char flag     = code & FLAG_REF;
+    char obj_type = code & ~FLAG_REF;
+    int n;
+    switch (obj_type) {
 
-        case TYPE_CODE:
-            std::cout << "got a code object" << std::endl;
-            list->add(get_code_object());
-            break;
+    case TYPE_CODE:
+        std::cout << "got a code object" << std::endl;
+        retval = get_code_object();
+        get_ref(retval);
+        break;
 
-        case TYPE_INT:
-            list->add(new PyInteger(file_stream->read_int()));
-            break;
+    case TYPE_INT:
+        retval = new PyInteger(file_stream->read_int());
+        R_REF(retval);
+        break;
 
-        case TYPE_NONE:
-            list->add(Universe::Py_None);
-            break;
+    case TYPE_NONE:
+        retval = Universe::Py_None;
+        break;
 
-        case TYPE_INTERNED:
-            str = get_string();
-            list->add(str);
-            _string_table.add(str);
-            break;
+    case TYPE_INTERNED:
+        assert(0);
+        n = file_stream->read_int();
+        str = get_string(n);
+        _object_table.add(str);
+        retval = str;
+        break;
 
-        case TYPE_STRING:
-            list->add(get_string(false));
-            break;
+    case TYPE_STRING:
+        n = file_stream->read_int();
+        retval = get_string(n);
+        R_REF(retval);
+        break;
 
-        case TYPE_SHORT_ASCII_INTERNED:
-            str = get_string(true);
-            list->add(str);
-            _string_table.add(str);
-            break;
+    case TYPE_SHORT_ASCII:
+    case TYPE_SHORT_ASCII_INTERNED:
+        n = file_stream->read();
+        str = get_string(n);
+        retval = str;
+        R_REF(retval);
+        break;
 
-        case TYPE_REF:
-            list->add(_string_table.get(file_stream->read_int()));
-            break;
+    case TYPE_REF:
+        retval = _object_table.get(file_stream->read_int());
+        break;
 
-        default:
-            printf("Not inplemented: %d\n", obj_type);
-            exit(-1);
+    case TYPE_TUPLE:
+        n = file_stream->read_int();
+        retval = get_tuple(n);
+        R_REF(retval);
+        break;
 
-        }
+    case TYPE_SMALL_TUPLE:
+        n = file_stream->read();
+        retval = get_tuple(n);
+        R_REF(retval);
+        break;
+
+    default:
+        printf("Not inplemented: %x\n", code);
+        exit(-1);
+
     }
 
+    return retval;
+}
+
+PyList<PyObject*>* BinaryFileParser::get_tuple(int n) {
+    PyList<PyObject*>* list = new PyList<PyObject*>();
+    for (int i = 0; i < n; i++) {
+        list->add(get_object());
+    }
     return list;
 }
 
-PyString* BinaryFileParser::get_string(bool is_short) {
-    int length;
+PyString* BinaryFileParser::get_string(int n) {
+    int length = n;
     string s;
-    if (is_short) {
-        length = file_stream->read();
-    } else {
-        length = file_stream->read_int();
-    }
     for (int i = 0; i < length; i++) {
         s.push_back(file_stream->read());
     }
     return new PyString(s);
 }
 
-PyList<PyObject*>* BinaryFileParser::get_names() {
-    int type = file_stream->read();
-    if (type == TYPE_TUPLE) {
-        return get_tuple(false);
-    } else if (type == TYPE_SMALL_TUPLE) {
-        return get_tuple(true);
-    }
+PyList<PyObject*>* BinaryFileParser::get_consts() {
+    return (PyList<PyObject*>*)get_object();
+}
 
-    file_stream->unread();
-    return NULL;
-    
+PyList<PyObject*>* BinaryFileParser::get_names() {
+    return (PyList<PyObject*>*)get_object();
 }
 
 PyList<PyObject*>* BinaryFileParser::get_varnames() {
-    int type = file_stream->read();
-    if (type == TYPE_TUPLE) {
-        return get_tuple(false);
-    } else if (type == TYPE_SMALL_TUPLE) {
-        return get_tuple(true);
-    }
-
-    file_stream->unread();
-    return NULL;
+    return (PyList<PyObject*>*)get_object();
 }
 
 PyList<PyObject*>* BinaryFileParser::get_freevars() {
-    int type = file_stream->read();
-    if (type == TYPE_TUPLE) {
-        return get_tuple(false);
-    } else if (type == TYPE_SMALL_TUPLE) {
-        return get_tuple(true);
-    }
-
-    file_stream->unread();
-    return NULL;
+    return (PyList<PyObject*>*)get_object();
 }
 
 PyList<PyObject*>* BinaryFileParser::get_cellvars() {
-    int type = file_stream->read();
-    if (type == TYPE_TUPLE) {
-        return get_tuple(false);
-    } else if (type == TYPE_SMALL_TUPLE) {
-        return get_tuple(true);
-    }
-
-    file_stream->unread();
-    return NULL;
+    return (PyList<PyObject*>*)get_object();
 }
 
 PyString* BinaryFileParser::get_filename() {
@@ -263,28 +233,22 @@ PyString* BinaryFileParser::get_filename() {
 }
 
 PyString* BinaryFileParser::get_name() {
-    char ch = file_stream->read();
-
-    if (ch == TYPE_STRING) {
-        return get_string(false);
-    } else if (ch == TYPE_INTERNED) {
-        PyString* str = get_string(false);
-        _string_table.add(str);
-        return str;
-    } else if (ch == TYPE_REF) {
-        return _string_table.get(file_stream->read_int());
-    }
-
-    return NULL;
+    return (PyString*)get_object();
 }
 
 PyString* BinaryFileParser::get_lnotab() {
-    char ch = file_stream->read();
+    char type = file_stream->read();
+    type = type & ~FLAG_REF;
 
-    if (ch != TYPE_STRING && ch != TYPE_INTERNED) {
+    if (type != TYPE_STRING && type != TYPE_INTERNED) {
         file_stream->unread();
         return NULL;
     }
     
-    return get_string(true);
+    int n = file_stream->read_int();
+    return get_string(n);
+}
+
+void BinaryFileParser::get_ref(PyObject* o) {
+    _object_table.add(o);
 }

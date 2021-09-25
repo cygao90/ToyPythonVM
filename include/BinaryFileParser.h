@@ -10,11 +10,10 @@
 class BinaryFileParser {
 private:
     BufferInputStream* file_stream;
-    PyList<PyString*> _string_table;
+    PyList<PyObject*> _object_table;
 
 public:
     BinaryFileParser(BufferInputStream* file_stream): file_stream(file_stream) {}
-    PyString* get_string();
 
     CodeObject*      parse();    
     CodeObject*      get_code_object();
@@ -28,8 +27,10 @@ public:
     PyString*        get_name();
     PyString*        get_lnotab();
 
-    PyList<PyObject*>* get_tuple(bool is_small);
-    PyString*          get_string(bool is_short);
+    PyList<PyObject*>* get_tuple(int n);
+    PyString*          get_string(int n);
+    PyObject*          get_object();
+    void               get_ref(PyObject* o);
 };
 
 #endif

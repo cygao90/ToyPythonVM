@@ -32,7 +32,7 @@ private:
 
 public:
 
-    void get_value() { std::cout << _value << "\n"; }
+    void print() { std::cout << _value << "\n"; }
 
     PyInteger(int value); 
     int value() { return _value; }

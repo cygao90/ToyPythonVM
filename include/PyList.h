@@ -1,12 +1,13 @@
 #ifndef LIST_H
 #define LIST_H
 
+#include "PyObject.h"
 #include <vector>
 
 using std::vector;
 
 template<typename T>
-class PyList {
+class PyList : public PyObject {
 private:
     vector<T> _array;
 public:
