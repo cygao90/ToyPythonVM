@@ -13,5 +13,5 @@ int main() {
     BinaryFileParser parser(file_stream);
     CodeObject* code = parser.parse();
     Interpreter interpreter;
-    //interpreter.run(code);
+    interpreter.run(code);
 }

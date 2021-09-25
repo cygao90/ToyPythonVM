@@ -13,7 +13,9 @@ private:
     PyList<PyObject*> _object_table;
 
 public:
-    BinaryFileParser(BufferInputStream* file_stream): file_stream(file_stream) {}
+    BinaryFileParser(BufferInputStream* file_stream): file_stream(file_stream) {
+        _object_table.add(NULL);
+    }
 
     CodeObject*      parse();    
     CodeObject*      get_code_object();

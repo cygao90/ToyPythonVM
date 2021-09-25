@@ -62,25 +62,24 @@ CodeObject* BinaryFileParser::parse() {
     int file_size = file_stream->read_int();
     printf("The file size is: %x\n", file_size);
 
-    char object_type = file_stream->read();
-    if (object_type == ('c' | FLAG_REF)) {
-        CodeObject* result = get_code_object();
-        printf("Parse OK!\n");
-        return result;
-    }
-
-    return NULL;
+    // char object_type = file_stream->read();
+    // if (object_type == ('c' | FLAG_REF)) {
+    //     CodeObject* result = get_code_object();
+    //     printf("Parse OK!\n");
+    //     return result;
+    // }
+    CodeObject* result = (CodeObject*)get_object();
+    printf("Parse OK!\n");
+    return result;
 }
 
 CodeObject* BinaryFileParser::get_code_object() {
     int argcount  = file_stream->read_int();
-    std::cout << argcount << std::endl;    
     int posonlyargcount = file_stream->read_int();
     int kwonlyargcount  = file_stream->read_int();
     int nlocals   = file_stream->read_int();
     int stacksize = file_stream->read_int();
     int flags     = file_stream->read_int();
-    std::cout << flags << std::endl; 
 
     PyString* byte_codes = get_byte_codes();
     PyList<PyObject*>* consts   = get_consts();
@@ -110,12 +109,6 @@ CodeObject* BinaryFileParser::get_code_object() {
         modulename,
         begin_line_no,
         lnotab);
-}
-
-PyString* BinaryFileParser::get_byte_codes() {
-    assert(file_stream->read() == TYPE_STRING);
-    int n = file_stream->read_int();
-    return get_string(n);
 }
 
 PyObject* BinaryFileParser::get_object() {
@@ -208,6 +201,10 @@ PyString* BinaryFileParser::get_string(int n) {
     return new PyString(s);
 }
 
+PyString* BinaryFileParser::get_byte_codes() {
+    return (PyString*)get_object();
+}
+
 PyList<PyObject*>* BinaryFileParser::get_consts() {
     return (PyList<PyObject*>*)get_object();
 }
@@ -237,18 +234,10 @@ PyString* BinaryFileParser::get_name() {
 }
 
 PyString* BinaryFileParser::get_lnotab() {
-    char type = file_stream->read();
-    type = type & ~FLAG_REF;
-
-    if (type != TYPE_STRING && type != TYPE_INTERNED) {
-        file_stream->unread();
-        return NULL;
-    }
-    
-    int n = file_stream->read_int();
-    return get_string(n);
+    return (PyString*)get_object();
 }
 
 void BinaryFileParser::get_ref(PyObject* o) {
+    printf("PyObject added\n");
     _object_table.add(o);
 }
