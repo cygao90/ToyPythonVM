@@ -45,7 +45,7 @@
 
 #define R_REF(O) do {\
     if (flag) \
-        get_ref(O);\
+        r_ref(O);\
 } while(0)
 
 CodeObject* BinaryFileParser::parse() {
@@ -68,29 +68,29 @@ CodeObject* BinaryFileParser::parse() {
     //     printf("Parse OK!\n");
     //     return result;
     // }
-    CodeObject* result = (CodeObject*)get_object();
+    CodeObject* result = (CodeObject*)r_object();
     printf("Parse OK!\n");
     return result;
 }
 
-CodeObject* BinaryFileParser::get_code_object() {
-    int argcount  = file_stream->read_int();
+CodeObject* BinaryFileParser::r_code_object() {
+    int argcount        = file_stream->read_int();
     int posonlyargcount = file_stream->read_int();
     int kwonlyargcount  = file_stream->read_int();
-    int nlocals   = file_stream->read_int();
-    int stacksize = file_stream->read_int();
-    int flags     = file_stream->read_int();
+    int nlocals         = file_stream->read_int();
+    int stacksize       = file_stream->read_int();
+    int flags           = file_stream->read_int();
 
-    PyString* byte_codes = get_byte_codes();
-    PyList<PyObject*>* consts   = get_consts();
-    PyList<PyObject*>* names    = get_names();
-    PyList<PyObject*>* varnames = get_varnames();
-    PyList<PyObject*>* freevars = get_freevars();
-    PyList<PyObject*>* cellvars = get_cellvars();
-    PyString* filename = get_filename();
-    PyString* modulename = get_name();
-    int begin_line_no = file_stream->read_int();
-    PyString* lnotab = get_lnotab();
+    PyString* byte_codes        = r_byte_codes();
+    PyList<PyObject*>* consts   = r_consts();
+    PyList<PyObject*>* names    = r_names();
+    PyList<PyObject*>* varnames = r_varnames();
+    PyList<PyObject*>* freevars = r_freevars();
+    PyList<PyObject*>* cellvars = r_cellvars();
+    PyString* filename          = r_filename();
+    PyString* modulename        = r_name();
+    int begin_line_no           = file_stream->read_int();
+    PyString* lnotab            = r_lnotab();
 
     return new CodeObject(
         argcount,
@@ -111,23 +111,24 @@ CodeObject* BinaryFileParser::get_code_object() {
         lnotab);
 }
 
-PyObject* BinaryFileParser::get_object() {
+PyObject* BinaryFileParser::r_object() {
 
     PyString* str;
     PyObject* retval;
    
-    char code = file_stream->read();
-    char flag     = code & FLAG_REF;
-    char obj_type = code & ~FLAG_REF;
+    int code = file_stream->read();
+    int flag     = code & FLAG_REF;
+    int obj_type = code & ~FLAG_REF;
     int n;
     switch (obj_type) {
 
-    case TYPE_CODE:
+    case TYPE_CODE: {
+        int idx = r_ref_reverse(flag);
         std::cout << "got a code object" << std::endl;
-        retval = get_code_object();
-        get_ref(retval);
+        retval = r_code_object();
+        r_ref_insert(retval, idx, flag);
         break;
-
+    }
     case TYPE_INT:
         retval = new PyInteger(file_stream->read_int());
         R_REF(retval);
@@ -140,21 +141,21 @@ PyObject* BinaryFileParser::get_object() {
     case TYPE_INTERNED:
         assert(0);
         n = file_stream->read_int();
-        str = get_string(n);
+        str = r_string(n);
         _object_table.add(str);
         retval = str;
         break;
 
     case TYPE_STRING:
         n = file_stream->read_int();
-        retval = get_string(n);
+        retval = r_string(n);
         R_REF(retval);
         break;
 
     case TYPE_SHORT_ASCII:
     case TYPE_SHORT_ASCII_INTERNED:
         n = file_stream->read();
-        str = get_string(n);
+        str = r_string(n);
         retval = str;
         R_REF(retval);
         break;
@@ -165,13 +166,13 @@ PyObject* BinaryFileParser::get_object() {
 
     case TYPE_TUPLE:
         n = file_stream->read_int();
-        retval = get_tuple(n);
+        retval = r_tuple(n);
         R_REF(retval);
         break;
 
     case TYPE_SMALL_TUPLE:
         n = file_stream->read();
-        retval = get_tuple(n);
+        retval = r_tuple(n);
         R_REF(retval);
         break;
 
@@ -184,15 +185,15 @@ PyObject* BinaryFileParser::get_object() {
     return retval;
 }
 
-PyList<PyObject*>* BinaryFileParser::get_tuple(int n) {
+PyList<PyObject*>* BinaryFileParser::r_tuple(int n) {
     PyList<PyObject*>* list = new PyList<PyObject*>();
     for (int i = 0; i < n; i++) {
-        list->add(get_object());
+        list->add(r_object());
     }
     return list;
 }
 
-PyString* BinaryFileParser::get_string(int n) {
+PyString* BinaryFileParser::r_string(int n) {
     int length = n;
     string s;
     for (int i = 0; i < length; i++) {
@@ -201,43 +202,61 @@ PyString* BinaryFileParser::get_string(int n) {
     return new PyString(s);
 }
 
-PyString* BinaryFileParser::get_byte_codes() {
-    return (PyString*)get_object();
+PyString* BinaryFileParser::r_byte_codes() {
+    return (PyString*)r_object();
 }
 
-PyList<PyObject*>* BinaryFileParser::get_consts() {
-    return (PyList<PyObject*>*)get_object();
+PyList<PyObject*>* BinaryFileParser::r_consts() {
+    return (PyList<PyObject*>*)r_object();
 }
 
-PyList<PyObject*>* BinaryFileParser::get_names() {
-    return (PyList<PyObject*>*)get_object();
+PyList<PyObject*>* BinaryFileParser::r_names() {
+    return (PyList<PyObject*>*)r_object();
 }
 
-PyList<PyObject*>* BinaryFileParser::get_varnames() {
-    return (PyList<PyObject*>*)get_object();
+PyList<PyObject*>* BinaryFileParser::r_varnames() {
+    return (PyList<PyObject*>*)r_object();
 }
 
-PyList<PyObject*>* BinaryFileParser::get_freevars() {
-    return (PyList<PyObject*>*)get_object();
+PyList<PyObject*>* BinaryFileParser::r_freevars() {
+    return (PyList<PyObject*>*)r_object();
 }
 
-PyList<PyObject*>* BinaryFileParser::get_cellvars() {
-    return (PyList<PyObject*>*)get_object();
+PyList<PyObject*>* BinaryFileParser::r_cellvars() {
+    return (PyList<PyObject*>*)r_object();
 }
 
-PyString* BinaryFileParser::get_filename() {
-    return get_name();
+PyString* BinaryFileParser::r_filename() {
+    return r_name();
 }
 
-PyString* BinaryFileParser::get_name() {
-    return (PyString*)get_object();
+PyString* BinaryFileParser::r_name() {
+    return (PyString*)r_object();
 }
 
-PyString* BinaryFileParser::get_lnotab() {
-    return (PyString*)get_object();
+PyString* BinaryFileParser::r_lnotab() {
+    return (PyString*)r_object();
 }
 
-void BinaryFileParser::get_ref(PyObject* o) {
+PyObject* BinaryFileParser::r_ref(PyObject* o) {
     printf("PyObject added\n");
     _object_table.add(o);
+    return o;
+}
+
+int BinaryFileParser::r_ref_reverse(int flag) {
+    if (flag) {
+        int idx = _object_table.size();
+        _object_table.add(Universe::Py_None);
+        return idx;
+    } else {
+        return 0;
+    }
+}
+
+PyObject* BinaryFileParser::r_ref_insert(PyObject* o, int idx, int flag) {
+    if (o != NULL && flag) {
+        _object_table.set(idx, o);
+    }
+    return o;
 }

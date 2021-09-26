@@ -3,7 +3,7 @@
 
 #include "PyObject.h"
 #include "Klass.h"
-#include "FrameObject.h"
+#include "CodeObject.h"
 
 class FunctionKlass : public Klass {
 private:

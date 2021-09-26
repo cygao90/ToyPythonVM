@@ -16,9 +16,24 @@ Interpreter::Interpreter() {
 
 }
 
-void Interpreter::run(CodeObject* _codes) {
+void Interpreter::run(CodeObject* codes) {
+    _frame = new FrameObject(codes);
+    eval_frame();
+    destroy_frame();
+}
 
-    _frame = new FrameObject(_codes);
+void Interpreter::destroy_frame() {
+    FrameObject* temp = _frame;
+    _frame = _frame->sender();
+    delete temp;
+}
+
+void Interpreter::leave_frame() {
+    destroy_frame();
+    PUSH(_ret_value);
+}
+
+void Interpreter::eval_frame() {
 
     while (_frame->has_more_codes()) {
         unsigned char op_code = _frame->get_op_code();
@@ -35,6 +50,7 @@ void Interpreter::run(CodeObject* _codes) {
             _frame->consts()->get(op_arg)->print(); 
             break;
 
+        case LOAD_FAST:
         case LOAD_NAME:
             v = _frame->names()->get(op_arg);
             w = _frame->locals()->get(v);
@@ -46,6 +62,7 @@ void Interpreter::run(CodeObject* _codes) {
             v->print();
             break;
 
+        case STORE_FAST:
         case STORE_NAME:
             v = _frame->names()->get(op_arg);
             _frame->locals()->insert(v, POP());
@@ -54,6 +71,7 @@ void Interpreter::run(CodeObject* _codes) {
             break;
 
         case CALL_FUNCTION:
+            build_frame(POP());
             cout << "Call function \n";
             break;
 
@@ -62,6 +80,11 @@ void Interpreter::run(CodeObject* _codes) {
             break;
 
         case RETURN_VALUE:
+            _ret_value = POP();
+            if (_frame->is_first_frame()) {
+                return;
+            }
+            leave_frame();
             cout << "return value \n";
             break;
 
@@ -128,8 +151,9 @@ void Interpreter::run(CodeObject* _codes) {
             break;
 
         case MAKE_FUNCTION:
-            v = POP();
-            fo = new FunctionObject(v);
+            v = POP(); // name
+            w = POP(); // code_obj
+            fo = new FunctionObject(w);
             PUSH(fo);
             break;
 
@@ -139,3 +163,9 @@ void Interpreter::run(CodeObject* _codes) {
         }
     }
 };
+
+void Interpreter::build_frame(PyObject* callable) {
+    FrameObject* frame = new FrameObject((FunctionObject*)callable);
+    frame->set_sender(_frame);
+    _frame = frame;
+}

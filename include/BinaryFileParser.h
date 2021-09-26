@@ -13,26 +13,26 @@ private:
     PyList<PyObject*> _object_table;
 
 public:
-    BinaryFileParser(BufferInputStream* file_stream): file_stream(file_stream) {
-        _object_table.add(NULL);
-    }
+    BinaryFileParser(BufferInputStream* file_stream): file_stream(file_stream) {}
 
-    CodeObject*      parse();    
-    CodeObject*      get_code_object();
-    PyString*        get_byte_codes();
-    PyList<PyObject*>* get_consts();
-    PyList<PyObject*>* get_names();
-    PyList<PyObject*>* get_varnames();
-    PyList<PyObject*>* get_freevars();
-    PyList<PyObject*>* get_cellvars();
-    PyString*        get_filename();
-    PyString*        get_name();
-    PyString*        get_lnotab();
+    CodeObject*        parse();    
+    CodeObject*        r_code_object();
+    PyString*          r_byte_codes();
+    PyList<PyObject*>* r_consts();
+    PyList<PyObject*>* r_names();
+    PyList<PyObject*>* r_varnames();
+    PyList<PyObject*>* r_freevars();
+    PyList<PyObject*>* r_cellvars();
+    PyString*          r_filename();
+    PyString*          r_name();
+    PyString*          r_lnotab();
 
-    PyList<PyObject*>* get_tuple(int n);
-    PyString*          get_string(int n);
-    PyObject*          get_object();
-    void               get_ref(PyObject* o);
+    PyList<PyObject*>* r_tuple(int n);
+    PyString*          r_string(int n);
+    PyObject*          r_object();
+    PyObject*          r_ref(PyObject* o);
+    int                r_ref_reverse(int flag);
+    PyObject*          r_ref_insert(PyObject* o, int idx, int flag);
 };
 
 #endif
