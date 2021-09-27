@@ -50,7 +50,6 @@ void Interpreter::eval_frame() {
             _frame->consts()->get(op_arg)->print(); 
             break;
 
-        case LOAD_FAST:
         case LOAD_NAME:
             v = _frame->names()->get(op_arg);
             w = _frame->locals()->get(v);
@@ -62,7 +61,6 @@ void Interpreter::eval_frame() {
             v->print();
             break;
 
-        case STORE_FAST:
         case STORE_NAME:
             v = _frame->names()->get(op_arg);
             _frame->locals()->insert(v, POP());
@@ -76,6 +74,7 @@ void Interpreter::eval_frame() {
             break;
 
         case POP_TOP:
+            POP();
             cout << "pop top \n";
             break;
 
@@ -155,6 +154,15 @@ void Interpreter::eval_frame() {
             w = POP(); // code_obj
             fo = new FunctionObject(w);
             PUSH(fo);
+            break;
+
+        case STORE_FAST:
+            v = POP();
+            _frame->_fast_locals->set(op_arg, v);
+            break;
+
+        case LOAD_FAST:
+            PUSH(_frame->_fast_locals->get(op_arg));
             break;
 
         default:

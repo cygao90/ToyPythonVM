@@ -37,6 +37,9 @@ T PyList<T>::get(int index) {
 
 template<typename T>
 void PyList<T>::set(int index, T t) {
+    while (index >= size()) {
+       add(NULL); 
+    }
     _array.at(index) = t;
 }
 

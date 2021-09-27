@@ -8,8 +8,11 @@ FrameObject::FrameObject(CodeObject* codes) {
 
     _stack  = new PyList<PyObject*>();
 
+    _fast_locals = new PyList<PyObject*>();
+
     _codes  = codes;
     _pc     = 0;
+    _sender = NULL;
 }
 
 unsigned char FrameObject::get_op_arg() {
@@ -31,6 +34,7 @@ FrameObject::FrameObject(FunctionObject* func) {
     _names = _codes->co_names;
     _locals = new Map<PyObject* ,PyObject*>();
     _stack = new PyList<PyObject*>();
+    _fast_locals = new PyList<PyObject*>();
     _pc = 0;
     _sender = NULL;
 }

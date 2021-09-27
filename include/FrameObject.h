@@ -18,6 +18,7 @@ public:
     PyList<PyObject*>* _names;
 
     Map<PyObject*, PyObject*>* _locals;
+    PyList<PyObject*>* _fast_locals;
 
     CodeObject* _codes;
     int         _pc;
