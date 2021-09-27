@@ -23,6 +23,8 @@ public:
     virtual PyObject* ne(PyObject* x, PyObject* y);     
     virtual PyObject* gt(PyObject* x, PyObject* y);     
     virtual PyObject* ge(PyObject* x, PyObject* y);     
+
+    virtual PyObject* len(PyObject* x);
 };
 
 class PyString : public PyObject {
@@ -30,9 +32,6 @@ private:
     string _value;
 
 public:
-
-    void print() { std::cout << _value << "\n"; }
-
     PyString(const string s);
 
     string& value() { return _value; } 

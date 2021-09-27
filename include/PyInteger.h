@@ -24,6 +24,8 @@ public:
     virtual PyObject* ne(PyObject* x, PyObject* y);     
     virtual PyObject* gt(PyObject* x, PyObject* y);     
     virtual PyObject* ge(PyObject* x, PyObject* y);     
+
+    virtual PyObject* print(PyObject* x);
 };
 
 class PyInteger : public PyObject {

@@ -9,7 +9,7 @@ class FunctionObject;
 class FrameObject {
 public:
     FrameObject(CodeObject* codes);
-    FrameObject(FunctionObject* func);
+    FrameObject(FunctionObject* func, PyList<PyObject*>* args);
     ~FrameObject();
 
     PyList<PyObject*>* _stack;

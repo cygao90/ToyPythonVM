@@ -1,4 +1,5 @@
 #include "PyObject.h"
+#include "PyList.h"
 
 PyObject* PyObject::add(PyObject* x) {
     return klass()->add(this, x);
@@ -58,4 +59,12 @@ PyObject* PyObject::is(PyObject* x) {
 
 PyObject* PyObject::is_not(PyObject* x) {
     return klass()->is_not(this, x);
+}
+
+PyObject* PyObject::len(PyObject* args) {
+    return klass()->len(this);
+}
+
+PyObject* PyObject::print(PyObject* args) {
+    return klass()->print(this);
 }

@@ -195,3 +195,7 @@ PyObject* StringKlass::add(PyObject* x, PyObject* y) {
 
 //     return new PyString(ix->value() % iy->value());
 // } 
+
+PyObject* StringKlass::len(PyObject* x) {
+    return new PyInteger(((PyString*)x)->length());
+}

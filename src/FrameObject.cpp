@@ -28,13 +28,18 @@ bool FrameObject::has_more_codes() {
     return _pc < _codes->co_code->length();
 }
 
-FrameObject::FrameObject(FunctionObject* func) {
+FrameObject::FrameObject(FunctionObject* func, PyList<PyObject*>* args) {
     _codes = func->_func_code;
     _consts = _codes->co_consts;
     _names = _codes->co_names;
     _locals = new Map<PyObject* ,PyObject*>();
     _stack = new PyList<PyObject*>();
     _fast_locals = new PyList<PyObject*>();
+    if (args) {
+        for (int i = 0; i < args->size(); i++) {
+            _fast_locals->set(i, args->get(i));
+        }
+    }
     _pc = 0;
     _sender = NULL;
 }

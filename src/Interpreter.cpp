@@ -13,7 +13,9 @@ using std::cerr;
 #define POP()    _frame->stack()->pop()
 
 Interpreter::Interpreter() {
-
+    _builtins = new Map<string, PyObject*>();
+    _builtins->insert("len", new FunctionObject(len));
+    _builtins->insert("print", new FunctionObject(print));
 }
 
 void Interpreter::run(CodeObject* codes) {
@@ -42,40 +44,51 @@ void Interpreter::eval_frame() {
         PyInteger* lhs, *rhs;
         PyObject* v, *w, *u, *attr; // tmp vars
         FunctionObject* fo;
+        PyList<PyObject*>* args = NULL;
 
         switch (op_code) {
         case LOAD_CONST:
             PUSH(_frame->consts()->get(op_arg));
-            cout << "LOAD_CONST ";
-            _frame->consts()->get(op_arg)->print(); 
             break;
 
         case LOAD_NAME:
             v = _frame->names()->get(op_arg);
             w = _frame->locals()->get(v);
-            if (w == Universe::Py_None) {
-                cerr << "no locals when loading name\n";
+            if (w != Universe::Py_None) {
+                PUSH(w);
+                break;
             }
+
+            w = _builtins->get(((PyString*)v)->value());
+            if (w != Universe::Py_None) {
+                PUSH(w);
+                break;
+            }
+            cerr << "no locals when loading name\n";
             PUSH(w);
-            cout << "LOAD_NAME ";
-            v->print();
             break;
 
         case STORE_NAME:
             v = _frame->names()->get(op_arg);
             _frame->locals()->insert(v, POP());
-            cout << "STORE_NAME ";
-            v->print();
             break;
 
         case CALL_FUNCTION:
-            build_frame(POP());
-            cout << "Call function \n";
+            if (op_arg > 0) {
+                args = new PyList<PyObject*>();
+                while (op_arg--) {
+                    args->set(op_arg, POP());
+                }
+            }
+            build_frame(POP(), args);
+            if (args) {
+                delete args;
+                args = NULL;
+            }
             break;
 
         case POP_TOP:
             POP();
-            cout << "pop top \n";
             break;
 
         case RETURN_VALUE:
@@ -84,49 +97,40 @@ void Interpreter::eval_frame() {
                 return;
             }
             leave_frame();
-            cout << "return value \n";
             break;
 
         case COMPARE_OP:
-            cout << "compare op ";
             w = POP(); // right
             v = POP(); // left
             
             switch (op_arg) {
             case cmp_op::PyCmp_LT:
-                cout << "lt\n";
                 PUSH(v->lt(w));
                 break;
 
             case cmp_op::PyCmp_LE:
-                cout << "le\n";
                 PUSH(v->le(w));
                 break;
 
             case cmp_op::PyCmp_EQ:
-                cout << "eq\n";
                 PUSH(v->eq(w));
                 break;
 
             case cmp_op::PyCmp_NE:
-                cout << "ne\n";
                 PUSH(v->ne(w));
                 break;
 
             case cmp_op::PyCmp_GT:
-                cout << "gt\n";
                 PUSH(v->gt(w));
                 break;
 
             case cmp_op::PyCmp_GE:
-                cout << "ge\n";
                 PUSH(v->ge(w));
                 break;
             }
             break;
         
         case POP_JUMP_IF_FALSE:
-            cout << "jump if false" << op_arg << "\n";
             v = POP();
             if (v == Universe::Py_False) {
                 _frame->set_pc(op_arg);
@@ -134,13 +138,11 @@ void Interpreter::eval_frame() {
             break;
 
         case JUMP_FORWARD:
-            cout << "jump forward\n";
             _frame->set_pc(_frame->get_pc() + op_arg);
             break;
 
         case JUMP_ABSOLUTE:
             _frame->set_pc(op_arg);
-            cout << "jump absolute\n\n";
             break;
 
         case BINARY_ADD:
@@ -172,8 +174,12 @@ void Interpreter::eval_frame() {
     }
 };
 
-void Interpreter::build_frame(PyObject* callable) {
-    FrameObject* frame = new FrameObject((FunctionObject*)callable);
-    frame->set_sender(_frame);
-    _frame = frame;
+void Interpreter::build_frame(PyObject* callable, PyList<PyObject*>* args) {
+    if (callable->klass() == NativeFunctionKlass::get_instance()) {
+        PUSH(((FunctionObject*)callable)->call(args));
+    } else {
+        FrameObject* frame = new FrameObject((FunctionObject*)callable, args);
+        frame->set_sender(_frame);
+        _frame = frame;
+    }
 }

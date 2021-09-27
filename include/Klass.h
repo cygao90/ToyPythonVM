@@ -32,6 +32,9 @@ public:
     virtual PyObject* not_in(PyObject* x, PyObject* y) { return NULL; }
     virtual PyObject* is(PyObject* x, PyObject* y)     { return NULL; }
     virtual PyObject* is_not(PyObject* x, PyObject* y) { return NULL; }
+
+    virtual PyObject* len(PyObject* args)              { return NULL; }
+    virtual PyObject* print(PyObject* args)            { return NULL; }
 };
 
 #endif

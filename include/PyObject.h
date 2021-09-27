@@ -12,10 +12,6 @@ public:
     Klass* klass() { assert(_klass != NULL); return _klass; }
     void set_klass(Klass* x) { _klass = x; }
 
-    /* tmp */
-    virtual void print() {}
-    /* tmp */
-
     PyObject* add(PyObject* x); 
     PyObject* sub(PyObject* x); 
     PyObject* mul(PyObject* x); 
@@ -32,6 +28,9 @@ public:
     PyObject* not_in(PyObject* x); 
     PyObject* is(PyObject* x); 
     PyObject* is_not(PyObject* x); 
+
+    PyObject* len(PyObject* args);
+    PyObject* print(PyObject* args);
 };
 
 #endif

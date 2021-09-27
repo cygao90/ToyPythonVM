@@ -14,6 +14,17 @@ public:
     static FunctionKlass* get_instance();
 };
 
+class NativeFunctionKlass : public Klass {
+private:
+    NativeFunctionKlass();
+    static NativeFunctionKlass* _instance;
+
+public:
+    static NativeFunctionKlass* get_instance();
+};
+
+typedef PyObject* (*NativeFuncPointer)(PyList<PyObject*>* args);
+
 class FunctionObject : public PyObject {
 friend class FunctionKlass;
 friend class FrameObject;
@@ -24,14 +35,20 @@ private:
 
     unsigned int _flags;
 
+    NativeFuncPointer _native_func;
+
 public:
     FunctionObject(PyObject* code_object);
-    FunctionObject(Klass* klass) : _func_code(NULL), _func_name(NULL), _flags(0) {
-        set_klass(klass);
-    }
+    FunctionObject(Klass* klass);
+    FunctionObject(NativeFuncPointer nfp);
+
+    PyObject* call(PyList<PyObject*>* args);
 
     PyString* func_name() { return _func_name; }
     int flags()           { return _flags; }
 };
+
+PyObject* len(PyList<PyObject*>* args);
+PyObject* print(PyList<PyObject*>* args);
 
 #endif

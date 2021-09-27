@@ -239,7 +239,6 @@ PyString* BinaryFileParser::r_lnotab() {
 }
 
 PyObject* BinaryFileParser::r_ref(PyObject* o) {
-    printf("PyObject added\n");
     _object_table.add(o);
     return o;
 }

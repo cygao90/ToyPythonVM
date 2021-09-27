@@ -1,10 +1,11 @@
 #include "PyInteger.h"
 #include "Universe.h"
+#include "PyString.h"
 
 IntegerKlass* IntegerKlass::_instance = NULL;
 
 IntegerKlass::IntegerKlass() {
-
+    set_name(new PyString("int"));
 }
 
 IntegerKlass* IntegerKlass::get_instance() {
@@ -195,3 +196,8 @@ PyObject* IntegerKlass::mod(PyObject* x, PyObject* y) {
 
     return new PyInteger(ix->value() % iy->value());
 } 
+
+PyObject* IntegerKlass::print(PyObject* x) {
+    printf("%d", ((PyInteger*)x)->value());
+    return NULL;
+}

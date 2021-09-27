@@ -24,12 +24,10 @@ public:
 
     char read() {
         if (index < BUFFER_LEN) {
-            printf("%02x\n", (unsigned char)buffer[index]);
             return buffer[index++];
         } else {
             index = 0;
             fread(buffer, BUFFER_LEN * sizeof(char), 1, fp);
-            printf("%02x\n", (unsigned char)buffer[index]);
             return buffer[index++];
         }
     }
