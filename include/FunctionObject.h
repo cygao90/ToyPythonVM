@@ -37,12 +37,17 @@ private:
 
     NativeFuncPointer _native_func;
 
+    PyList<PyObject*>* _defaults;
+
 public:
     FunctionObject(PyObject* code_object);
     FunctionObject(Klass* klass);
     FunctionObject(NativeFuncPointer nfp);
 
     PyObject* call(PyList<PyObject*>* args);
+
+    PyList<PyObject*>* defaults() { return _defaults; }
+    void set_defaults(PyList<PyObject*>* defaults);
 
     PyString* func_name() { return _func_name; }
     int flags()           { return _flags; }

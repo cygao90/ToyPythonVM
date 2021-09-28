@@ -155,6 +155,11 @@ void Interpreter::eval_frame() {
             v = POP(); // name
             w = POP(); // code_obj
             fo = new FunctionObject(w);
+
+            if (op_arg & 0x01) {
+                fo->set_defaults((PyList<PyObject*>*)POP());
+            }
+
             PUSH(fo);
             break;
 

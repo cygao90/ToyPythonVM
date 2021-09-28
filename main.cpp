@@ -7,9 +7,9 @@
 
 using namespace std;
 
-int main() {
+int main(int argc, char** argv) {
     Universe::genesis();
-    BufferInputStream* file_stream = new BufferInputStream("../test/__pycache__/test.cpython-38.pyc");
+    BufferInputStream* file_stream = new BufferInputStream(argv[1]);
     BinaryFileParser parser(file_stream);
     CodeObject* code = parser.parse();
     Interpreter interpreter;

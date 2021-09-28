@@ -35,6 +35,16 @@ FrameObject::FrameObject(FunctionObject* func, PyList<PyObject*>* args) {
     _locals = new Map<PyObject* ,PyObject*>();
     _stack = new PyList<PyObject*>();
     _fast_locals = new PyList<PyObject*>();
+
+    if (func->_defaults) {
+        int argcnt = _codes->co_argcount;
+        int dftcnt = func->_defaults->length();
+
+        for (int i = argcnt - dftcnt; i < dftcnt; i++) {
+            _fast_locals->set(i, func->_defaults->get(i));
+        }
+    }
+
     if (args) {
         for (int i = 0; i < args->size(); i++) {
             _fast_locals->set(i, args->get(i));
