@@ -1,7 +1,8 @@
 #ifndef UNIVERSE_H
 #define UNIVERSE_H
 
-#include "PyInteger.h"
+class PyInteger;
+class PyObject;
 
 class Universe {
 public:

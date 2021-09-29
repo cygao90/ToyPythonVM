@@ -48,20 +48,6 @@ NativeFunctionKlass::NativeFunctionKlass() {
     set_name(new PyString("native function"));
 }
 
-PyObject* len(PyList<PyObject*>* args) {
-    return args->get(0)->len(args);
-}
-
-PyObject* print(PyList<PyObject*>* args) {
-    for (int i = 0; i < args->length() - 1; i++) {
-        args->get(i)->print(args);
-        printf(" ");
-    }
-    args->get(args->length() - 1)->print(args);
-    printf("\n");
-    return NULL;
-}
-
 FunctionObject::FunctionObject(Klass* klass) : _func_code(NULL), _func_name(NULL), _flags(0), _defaults(NULL) {
     set_klass(klass);
 }
@@ -77,4 +63,18 @@ void FunctionObject::set_defaults(PyList<PyObject*>* defaults) {
     for (int i = 0; i < defaults->length(); i++) {
         _defaults->set(i, defaults->get(i));
     }
+}
+
+PyObject* len(PyList<PyObject*>* args) {
+    return args->get(0)->len(args);
+}
+
+PyObject* print(PyList<PyObject*>* args) {
+    for (int i = 0; i < args->length() - 1; i++) {
+        args->get(i)->print(args);
+        printf(" ");
+    }
+    args->get(args->length() - 1)->print(args);
+    printf("\n");
+    return NULL;
 }

@@ -1,4 +1,6 @@
 #include "Universe.h"
+#include "PyInteger.h"
+#include <stddef.h>
 
 PyInteger* Universe::Py_False = NULL;
 

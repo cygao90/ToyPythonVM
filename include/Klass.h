@@ -2,6 +2,10 @@
 #define KLASS_H
 
 #include <iostream>
+#include <string>
+#include "Map.h"
+
+using std::string;
 
 class PyObject;
 class PyString;
@@ -9,12 +13,16 @@ class PyString;
 class Klass {
 private:
     PyString* _name;
+    Map<string, PyObject*>* _klass_dict;
 
 public:
     Klass() {}
 
     void set_name(PyString* x) { _name = x; }
     PyString* name()           { return _name; }
+
+    void set_klass_dict(Map<string, PyObject*>* dict) { _klass_dict = dict; }
+    Map<string, PyObject*>* klass_dict() { return _klass_dict; }
 
     virtual PyObject* add(PyObject* x, PyObject* y)    { return NULL; }
     virtual PyObject* sub(PyObject* x, PyObject* y)    { return NULL; }

@@ -2,6 +2,7 @@
 #define PY_INTEGER_H
 
 #include "PyObject.h"
+#include "Klass.h"
 
 class IntegerKlass : public Klass {
 private:

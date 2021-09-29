@@ -1,4 +1,5 @@
 #include "PyString.h"
+#include "PyInteger.h"
 #include "Universe.h"
 
 StringKlass* StringKlass::_instance = NULL;
