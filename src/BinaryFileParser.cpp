@@ -50,17 +50,13 @@
 
 CodeObject* BinaryFileParser::parse() {
     int magic_number = file_stream->read_int();
-    printf("The magic number is: %x\n", magic_number);
     int bit_field = file_stream->read_int();
-    printf("The bit field is: %x\n", bit_field);
     if (bit_field != 0) {
         printf("Hash based pyc is not supported\n");
         exit(-1);
     }
     int timestamp = file_stream->read_int();
-    printf("The timestamp is: %x\n", timestamp);
     int file_size = file_stream->read_int();
-    printf("The file size is: %x\n", file_size);
 
     // char object_type = file_stream->read();
     // if (object_type == ('c' | FLAG_REF)) {
@@ -69,7 +65,6 @@ CodeObject* BinaryFileParser::parse() {
     //     return result;
     // }
     CodeObject* result = (CodeObject*)r_object();
-    printf("Parse OK!\n");
     return result;
 }
 
@@ -124,7 +119,6 @@ PyObject* BinaryFileParser::r_object() {
 
     case TYPE_CODE: {
         int idx = r_ref_reverse(flag);
-        std::cout << "got a code object" << std::endl;
         retval = r_code_object();
         r_ref_insert(retval, idx, flag);
         break;
