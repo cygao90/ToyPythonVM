@@ -155,7 +155,8 @@ void Interpreter::eval_frame() {
             v = POP(); // name
             w = POP(); // code_obj
             fo = new FunctionObject(w);
-
+            fo->set_globals(_frame->globals());
+            
             if (op_arg & 0x01) {
                 fo->set_defaults((PyList<PyObject*>*)POP());
             }
@@ -170,6 +171,17 @@ void Interpreter::eval_frame() {
 
         case LOAD_FAST:
             PUSH(_frame->_fast_locals->get(op_arg));
+            break;
+
+        case STORE_GLOBAL:
+            v = _frame->names()->get(op_arg);
+            _frame->globals()->insert(v, POP());
+            break;
+
+        case LOAD_GLOBAL:
+            v = _frame->names()->get(op_arg);
+            w = _frame->globals()->get(v);
+            PUSH(w);
             break;
 
         default:

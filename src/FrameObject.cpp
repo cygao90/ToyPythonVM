@@ -6,6 +6,8 @@ FrameObject::FrameObject(CodeObject* codes) {
 
     _locals = new Map<PyObject*, PyObject*>();
 
+    _globals = _locals;
+
     _stack  = new PyList<PyObject*>();
 
     _fast_locals = new PyList<PyObject*>();
@@ -33,6 +35,7 @@ FrameObject::FrameObject(FunctionObject* func, PyList<PyObject*>* args) {
     _consts = _codes->co_consts;
     _names = _codes->co_names;
     _locals = new Map<PyObject* ,PyObject*>();
+    _globals = func->_globals;
     _stack = new PyList<PyObject*>();
     _fast_locals = new PyList<PyObject*>();
 

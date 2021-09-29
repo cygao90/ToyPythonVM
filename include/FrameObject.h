@@ -18,6 +18,7 @@ public:
     PyList<PyObject*>* _names;
 
     Map<PyObject*, PyObject*>* _locals;
+    Map<PyObject*, PyObject*>* _globals;
     PyList<PyObject*>* _fast_locals;
 
     CodeObject* _codes;
@@ -32,6 +33,7 @@ public:
     PyList<PyObject*>* consts() const         { return _consts; }
     PyList<PyObject*>* names() const          { return _names; }
     Map<PyObject*, PyObject*>* locals() const { return _locals; }
+    Map<PyObject*, PyObject*>* globals() const { return _globals; }
     FrameObject* sender() const               { return _sender; }
     bool is_first_frame()                     { return _sender == NULL; }
     void set_sender(FrameObject* x)           { _sender = x; }

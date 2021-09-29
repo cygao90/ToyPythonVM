@@ -4,6 +4,7 @@
 #include "PyObject.h"
 #include "Klass.h"
 #include "CodeObject.h"
+#include "Map.h"
 
 class FunctionKlass : public Klass {
 private:
@@ -39,6 +40,8 @@ private:
 
     PyList<PyObject*>* _defaults;
 
+    Map<PyObject*, PyObject*>* _globals;
+
 public:
     FunctionObject(PyObject* code_object);
     FunctionObject(Klass* klass);
@@ -48,6 +51,9 @@ public:
 
     PyList<PyObject*>* defaults() { return _defaults; }
     void set_defaults(PyList<PyObject*>* defaults);
+
+    Map<PyObject*, PyObject*>* globals() { return _globals; }
+    void set_globals(Map<PyObject*, PyObject*>* x) { _globals = x; }
 
     PyString* func_name() { return _func_name; }
     int flags()           { return _flags; }
