@@ -181,7 +181,19 @@ void Interpreter::eval_frame() {
         case LOAD_GLOBAL:
             v = _frame->names()->get(op_arg);
             w = _frame->globals()->get(v);
-            PUSH(w);
+            
+            if (w != Universe::Py_None) {
+                PUSH(w);
+                break;
+            }
+
+            w = _builtins->get(((PyString*)v)->value());
+            if (w != Universe::Py_None) {
+                PUSH(w);
+                break;
+            }
+
+            assert(0 && "global variable not found.");
             break;
 
         default:

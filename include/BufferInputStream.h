@@ -14,6 +14,7 @@ private:
 public:
     BufferInputStream(char const* filename) {
         fp = fopen(filename, "rb");
+        assert(fp != NULL);
         fread(buffer, BUFFER_LEN * sizeof(char), 1, fp);
         index = 0;
     }
