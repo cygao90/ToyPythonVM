@@ -1,5 +1,7 @@
 #include "PyObject.h"
 #include "PyList.h"
+#include "PyString.h"
+#include "FunctionObject.h"
 
 PyObject* PyObject::add(PyObject* x) {
     return klass()->add(this, x);
@@ -59,6 +61,19 @@ PyObject* PyObject::is(PyObject* x) {
 
 PyObject* PyObject::is_not(PyObject* x) {
     return klass()->is_not(this, x);
+}
+
+PyObject* PyObject::getattr(PyObject* x) {
+    PyObject* ret = Universe::Py_None;
+    ret = klass()->klass_dict()->get(((PyString*)x)->value());
+    if (ret == Universe::Py_None) {
+        return ret;
+    }
+
+    if (MethodObject::is_function(ret)) {
+        ret = new MethodObject((FunctionObject*)ret, this);
+    }
+    return ret;
 }
 
 PyObject* PyObject::len(PyObject* args) {

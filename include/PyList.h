@@ -13,11 +13,11 @@ private:
 public:
     void add(T t);
     void insert(int index, T t);
-    T    get(int index);
+    T&   get(int index);
     void set(int index, T t);
     int  size();
-    int  length();
     T    pop();
+    T&   top();
 };
 
 template<typename T>
@@ -31,7 +31,7 @@ void PyList<T>::insert(int index, T t) {
 }
 
 template<typename T>
-T PyList<T>::get(int index) {
+T& PyList<T>::get(int index) {
     return _array.at(index);
 }
 
@@ -49,15 +49,16 @@ int PyList<T>::size() {
 }
 
 template<typename T>
-int PyList<T>::length() {
-    return _array.capacity();
-}
-
-template<typename T>
 T PyList<T>::pop() {
     T t = _array.back();
     _array.pop_back();
     return t;
+}
+
+template<typename T>
+T& PyList<T>::top() {
+    assert(size() > 0);
+    return _array.back();
 }
 
 #endif

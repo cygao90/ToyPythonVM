@@ -200,3 +200,8 @@ PyObject* StringKlass::add(PyObject* x, PyObject* y) {
 PyObject* StringKlass::len(PyObject* x) {
     return new PyInteger(((PyString*)x)->length());
 }
+
+PyObject* StringKlass::print(PyObject* x) {
+    printf("%s", ((PyString*)x)->value().c_str());
+    return NULL;
+}

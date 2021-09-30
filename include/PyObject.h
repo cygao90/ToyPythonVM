@@ -12,6 +12,8 @@ public:
     Klass* klass() { assert(_klass != NULL); return _klass; }
     void set_klass(Klass* x) { _klass = x; }
 
+    PyObject* getattr(PyObject* x);
+
     PyObject* add(PyObject* x); 
     PyObject* sub(PyObject* x); 
     PyObject* mul(PyObject* x); 

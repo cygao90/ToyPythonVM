@@ -59,7 +59,36 @@ public:
     int flags()           { return _flags; }
 };
 
+class MethodKlass : public Klass {
+private:
+    MethodKlass();
+    static MethodKlass* _instance;
+
+public:
+    static MethodKlass* get_instance();
+};
+
+class MethodObject : public PyObject {
+friend MethodKlass;
+
+private:
+    PyObject* _owner;
+    FunctionObject* _func;
+
+public:
+    MethodObject(FunctionObject* func);
+    MethodObject(FunctionObject* func, PyObject* owner);
+
+    static bool is_function(PyObject* x);
+
+    void set_owner(PyObject* owner) { _owner = owner; }
+    PyObject* owner()               { return _owner; }
+    FunctionObject* func()          { return _func; }
+
+};
+
 PyObject* len(PyList<PyObject*>* args);
 PyObject* print(PyList<PyObject*>* args);
+PyObject* string_upper(PyList<PyObject*>* args);
 
 #endif

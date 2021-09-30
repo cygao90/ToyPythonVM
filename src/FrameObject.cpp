@@ -41,7 +41,7 @@ FrameObject::FrameObject(FunctionObject* func, PyList<PyObject*>* args) {
 
     if (func->_defaults) {
         int argcnt = _codes->co_argcount;
-        int dftcnt = func->_defaults->length();
+        int dftcnt = func->_defaults->size();
 
         for (int i = argcnt - dftcnt; i < dftcnt; i++) {
             _fast_locals->set(i, func->_defaults->get(i));

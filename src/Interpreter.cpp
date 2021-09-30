@@ -9,8 +9,12 @@
 using std::cout;
 using std::cerr;
 
-#define PUSH(x)  _frame->stack()->add((x))
-#define POP()    _frame->stack()->pop()
+#define LEN()      _frame->stack()->size()
+#define PUSH(x)    _frame->stack()->add((x))
+#define POP()      _frame->stack()->pop()
+#define TOP()      _frame->stack()->top()
+#define PEEK(x)    _frame->stack()->get(LEN() - 1 - (x))
+#define SET_TOP(x) TOP() = (x)
 
 Interpreter::Interpreter() {
     _builtins = new Map<string, PyObject*>();
@@ -196,6 +200,34 @@ void Interpreter::eval_frame() {
             assert(0 && "global variable not found.");
             break;
 
+        case LOAD_METHOD:
+            v = _frame->names()->get(op_arg); // name
+            w = TOP(); // obj
+            u = w->getattr(v); // method
+
+            if (u == NULL) {
+                cerr << "attribute not found\n";
+                exit(-1);
+            }
+
+            SET_TOP(u);
+            break;
+
+        case CALL_METHOD:
+            if (op_arg > 0) {
+                args = new PyList<PyObject*>();
+                while (op_arg--) {
+                    args->set(op_arg, POP());
+                }
+            }
+            v = POP();
+            build_frame(v, args);
+            if (args) {
+                delete args;
+                args = NULL;
+            }
+            break;
+
         default:
             cerr << "Not implemented\n";
             exit(-1);
@@ -206,6 +238,13 @@ void Interpreter::eval_frame() {
 void Interpreter::build_frame(PyObject* callable, PyList<PyObject*>* args) {
     if (callable->klass() == NativeFunctionKlass::get_instance()) {
         PUSH(((FunctionObject*)callable)->call(args));
+    } else if (callable->klass() == MethodKlass::get_instance()) {
+        MethodObject* method = (MethodObject*)callable;
+        if (!args) {
+            args = new PyList<PyObject*>();
+        }
+        args->add(method->owner());
+        build_frame(method->func(), args);
     } else {
         FrameObject* frame = new FrameObject((FunctionObject*)callable, args);
         frame->set_sender(_frame);
