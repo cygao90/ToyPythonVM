@@ -10,7 +10,7 @@
 class BinaryFileParser {
 private:
     BufferInputStream* file_stream;
-    PyList<PyObject*> _object_table;
+    PyList _object_table;
 
 public:
     BinaryFileParser(BufferInputStream* file_stream): file_stream(file_stream) {}
@@ -18,16 +18,16 @@ public:
     CodeObject*        parse();    
     CodeObject*        r_code_object();
     PyString*          r_byte_codes();
-    PyList<PyObject*>* r_consts();
-    PyList<PyObject*>* r_names();
-    PyList<PyObject*>* r_varnames();
-    PyList<PyObject*>* r_freevars();
-    PyList<PyObject*>* r_cellvars();
+    PyList*            r_consts();
+    PyList*            r_names();
+    PyList*            r_varnames();
+    PyList*            r_freevars();
+    PyList*            r_cellvars();
     PyString*          r_filename();
     PyString*          r_name();
     PyString*          r_lnotab();
 
-    PyList<PyObject*>* r_tuple(int n);
+    PyList*            r_tuple(int n);
     PyString*          r_string(int n);
     PyObject*          r_object();
     PyObject*          r_ref(PyObject* o);

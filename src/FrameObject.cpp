@@ -8,9 +8,9 @@ FrameObject::FrameObject(CodeObject* codes) {
 
     _globals = _locals;
 
-    _stack  = new PyList<PyObject*>();
+    _stack  = new PyList();
 
-    _fast_locals = new PyList<PyObject*>();
+    _fast_locals = new PyList();
 
     _codes  = codes;
     _pc     = 0;
@@ -30,14 +30,14 @@ bool FrameObject::has_more_codes() {
     return _pc < _codes->co_code->length();
 }
 
-FrameObject::FrameObject(FunctionObject* func, PyList<PyObject*>* args) {
+FrameObject::FrameObject(FunctionObject* func, PyList* args) {
     _codes = func->_func_code;
     _consts = _codes->co_consts;
     _names = _codes->co_names;
     _locals = new Map<PyObject* ,PyObject*>();
     _globals = func->_globals;
-    _stack = new PyList<PyObject*>();
-    _fast_locals = new PyList<PyObject*>();
+    _stack = new PyList();
+    _fast_locals = new PyList();
 
     if (func->_defaults) {
         int argcnt = _codes->co_argcount;

@@ -34,7 +34,7 @@ FunctionObject::FunctionObject(NativeFuncPointer nfp) {
     set_klass(NativeFunctionKlass::get_instance());
 }
 
-PyObject* FunctionObject::call(PyList<PyObject*>* args) {
+PyObject* FunctionObject::call(PyList* args) {
     return (*_native_func)(args);
 }
 
@@ -53,13 +53,13 @@ FunctionObject::FunctionObject(Klass* klass) : _func_code(NULL), _func_name(NULL
     set_klass(klass);
 }
 
-void FunctionObject::set_defaults(PyList<PyObject*>* defaults) {
+void FunctionObject::set_defaults(PyList* defaults) {
     if (defaults == NULL) {
         _defaults = NULL;
         return;
     }
 
-    _defaults = new PyList<PyObject*>();
+    _defaults = new PyList();
 
     for (int i = 0; i < defaults->size(); i++) {
         _defaults->set(i, defaults->get(i));
@@ -94,11 +94,11 @@ bool MethodObject::is_function(PyObject* x) {
     return false;
 }
 
-PyObject* len(PyList<PyObject*>* args) {
+PyObject* len(PyList* args) {
     return args->get(0)->len(args);
 }
 
-PyObject* print(PyList<PyObject*>* args) {
+PyObject* print(PyList* args) {
     for (int i = 0; i < args->size() - 1; i++) {
         args->get(i)->print(args);
         printf(" ");
@@ -108,7 +108,7 @@ PyObject* print(PyList<PyObject*>* args) {
     return NULL;
 }
 
-PyObject* string_upper(PyList<PyObject*>* args) {
+PyObject* string_upper(PyList* args) {
     PyObject* arg0 = args->get(0);
     assert(arg0->klass() == StringKlass::get_instance());
 

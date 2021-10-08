@@ -24,11 +24,11 @@ public:
     int co_flags;
 
     PyString* co_code;
-    PyList<PyObject*>* co_consts;
-    PyList<PyObject*>* co_names;
-    PyList<PyObject*>* co_varnames;
-    PyList<PyObject*>* co_freevars;
-    PyList<PyObject*>* co_cellvars;
+    PyList* co_consts;
+    PyList* co_names;
+    PyList* co_varnames;
+    PyList* co_freevars;
+    PyList* co_cellvars;
 
     PyString* co_filename;
     PyString* co_name;
@@ -44,11 +44,11 @@ public:
         int co_stacksize,
         int co_flags,
         PyString* co_code,
-        PyList<PyObject*>* co_consts,
-        PyList<PyObject*>* co_names,
-        PyList<PyObject*>* co_varnames,
-        PyList<PyObject*>* co_freevars,
-        PyList<PyObject*>* co_cellvars,
+        PyList* co_consts,
+        PyList* co_names,
+        PyList* co_varnames,
+        PyList* co_freevars,
+        PyList* co_cellvars,
         PyString* co_filename,
         PyString* co_name,
         int co_firstlineno,

@@ -9,17 +9,17 @@ class FunctionObject;
 class FrameObject {
 public:
     FrameObject(CodeObject* codes);
-    FrameObject(FunctionObject* func, PyList<PyObject*>* args);
+    FrameObject(FunctionObject* func, PyList* args);
     ~FrameObject();
 
-    PyList<PyObject*>* _stack;
+    PyList* _stack;
 
-    PyList<PyObject*>* _consts;
-    PyList<PyObject*>* _names;
+    PyList* _consts;
+    PyList* _names;
 
     Map<PyObject*, PyObject*>* _locals;
     Map<PyObject*, PyObject*>* _globals;
-    PyList<PyObject*>* _fast_locals;
+    PyList* _fast_locals;
 
     CodeObject* _codes;
     int         _pc;
@@ -29,9 +29,9 @@ public:
     void set_pc(int x)      { _pc = x; }
     int get_pc() const      { return _pc; }
 
-    PyList<PyObject*>* stack() const          { return _stack; }
-    PyList<PyObject*>* consts() const         { return _consts; }
-    PyList<PyObject*>* names() const          { return _names; }
+    PyList* stack() const          { return _stack; }
+    PyList* consts() const         { return _consts; }
+    PyList* names() const          { return _names; }
     Map<PyObject*, PyObject*>* locals() const { return _locals; }
     Map<PyObject*, PyObject*>* globals() const { return _globals; }
     FrameObject* sender() const               { return _sender; }

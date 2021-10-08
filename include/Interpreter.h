@@ -13,7 +13,7 @@ public:
     Interpreter();
     void run(CodeObject* codes);
     void eval_frame();
-    void build_frame(PyObject* callable, PyList<PyObject*>* args);
+    void build_frame(PyObject* callable, PyList* args);
     void destroy_frame();
     void leave_frame();
 };

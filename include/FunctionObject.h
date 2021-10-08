@@ -24,7 +24,7 @@ public:
     static NativeFunctionKlass* get_instance();
 };
 
-typedef PyObject* (*NativeFuncPointer)(PyList<PyObject*>* args);
+typedef PyObject* (*NativeFuncPointer)(PyList* args);
 
 class FunctionObject : public PyObject {
 friend class FunctionKlass;
@@ -38,7 +38,7 @@ private:
 
     NativeFuncPointer _native_func;
 
-    PyList<PyObject*>* _defaults;
+    PyList* _defaults;
 
     Map<PyObject*, PyObject*>* _globals;
 
@@ -47,10 +47,10 @@ public:
     FunctionObject(Klass* klass);
     FunctionObject(NativeFuncPointer nfp);
 
-    PyObject* call(PyList<PyObject*>* args);
+    PyObject* call(PyList* args);
 
-    PyList<PyObject*>* defaults() { return _defaults; }
-    void set_defaults(PyList<PyObject*>* defaults);
+    PyList* defaults() { return _defaults; }
+    void set_defaults(PyList* defaults);
 
     Map<PyObject*, PyObject*>* globals() { return _globals; }
     void set_globals(Map<PyObject*, PyObject*>* x) { _globals = x; }
@@ -87,8 +87,8 @@ public:
 
 };
 
-PyObject* len(PyList<PyObject*>* args);
-PyObject* print(PyList<PyObject*>* args);
-PyObject* string_upper(PyList<PyObject*>* args);
+PyObject* len(PyList* args);
+PyObject* print(PyList* args);
+PyObject* string_upper(PyList* args);
 
 #endif

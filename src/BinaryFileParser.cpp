@@ -77,11 +77,11 @@ CodeObject* BinaryFileParser::r_code_object() {
     int flags           = file_stream->read_int();
 
     PyString* byte_codes        = r_byte_codes();
-    PyList<PyObject*>* consts   = r_consts();
-    PyList<PyObject*>* names    = r_names();
-    PyList<PyObject*>* varnames = r_varnames();
-    PyList<PyObject*>* freevars = r_freevars();
-    PyList<PyObject*>* cellvars = r_cellvars();
+    PyList* consts   = r_consts();
+    PyList* names    = r_names();
+    PyList* varnames = r_varnames();
+    PyList* freevars = r_freevars();
+    PyList* cellvars = r_cellvars();
     PyString* filename          = r_filename();
     PyString* modulename        = r_name();
     int begin_line_no           = file_stream->read_int();
@@ -179,8 +179,8 @@ PyObject* BinaryFileParser::r_object() {
     return retval;
 }
 
-PyList<PyObject*>* BinaryFileParser::r_tuple(int n) {
-    PyList<PyObject*>* list = new PyList<PyObject*>();
+PyList* BinaryFileParser::r_tuple(int n) {
+    PyList* list = new PyList();
     for (int i = 0; i < n; i++) {
         list->add(r_object());
     }
@@ -200,24 +200,24 @@ PyString* BinaryFileParser::r_byte_codes() {
     return (PyString*)r_object();
 }
 
-PyList<PyObject*>* BinaryFileParser::r_consts() {
-    return (PyList<PyObject*>*)r_object();
+PyList* BinaryFileParser::r_consts() {
+    return (PyList*)r_object();
 }
 
-PyList<PyObject*>* BinaryFileParser::r_names() {
-    return (PyList<PyObject*>*)r_object();
+PyList* BinaryFileParser::r_names() {
+    return (PyList*)r_object();
 }
 
-PyList<PyObject*>* BinaryFileParser::r_varnames() {
-    return (PyList<PyObject*>*)r_object();
+PyList* BinaryFileParser::r_varnames() {
+    return (PyList*)r_object();
 }
 
-PyList<PyObject*>* BinaryFileParser::r_freevars() {
-    return (PyList<PyObject*>*)r_object();
+PyList* BinaryFileParser::r_freevars() {
+    return (PyList*)r_object();
 }
 
-PyList<PyObject*>* BinaryFileParser::r_cellvars() {
-    return (PyList<PyObject*>*)r_object();
+PyList* BinaryFileParser::r_cellvars() {
+    return (PyList*)r_object();
 }
 
 PyString* BinaryFileParser::r_filename() {

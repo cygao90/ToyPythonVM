@@ -2,63 +2,22 @@
 #define LIST_H
 
 #include "PyObject.h"
-#include <vector>
+#include "ArrayList.h"
 
-using std::vector;
-
-template<typename T>
 class PyList : public PyObject {
 private:
-    vector<T> _array;
+    ArrayList<PyObject*>* _inner_list;
+
 public:
-    void add(T t);
-    void insert(int index, T t);
-    T&   get(int index);
-    void set(int index, T t);
-    int  size();
-    T    pop();
-    T&   top();
+    PyList();
+    ArrayList<PyObject*>* inner_list() { return _inner_list; }
+
+    int size()                         { return _inner_list->size(); }
+    void add(PyObject* obj)            { _inner_list->add(obj); }
+    PyObject* get(int index)           { return _inner_list->get(index); }
+    PyObject* pop()                    { return _inner_list->pop(); }
+    void set(int index, PyObject* obj) { _inner_list->set(index, obj); }
+    PyObject*& top()                    { return _inner_list->top(); }
 };
-
-template<typename T>
-void PyList<T>::add(T t) {
-    _array.push_back(t);
-}
-
-template<typename T>
-void PyList<T>::insert(int index, T t) {
-    _array.insert(_array.begin() + index, t);
-}
-
-template<typename T>
-T& PyList<T>::get(int index) {
-    return _array.at(index);
-}
-
-template<typename T>
-void PyList<T>::set(int index, T t) {
-    while (index >= size()) {
-       add(NULL); 
-    }
-    _array.at(index) = t;
-}
-
-template<typename T>
-int PyList<T>::size() {
-    return _array.size();
-}
-
-template<typename T>
-T PyList<T>::pop() {
-    T t = _array.back();
-    _array.pop_back();
-    return t;
-}
-
-template<typename T>
-T& PyList<T>::top() {
-    assert(size() > 0);
-    return _array.back();
-}
 
 #endif

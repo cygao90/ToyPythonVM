@@ -48,7 +48,7 @@ void Interpreter::eval_frame() {
         PyInteger* lhs, *rhs;
         PyObject* v, *w, *u, *attr; // tmp vars
         FunctionObject* fo;
-        PyList<PyObject*>* args = NULL;
+        PyList* args = NULL;
 
         switch (op_code) {
         case LOAD_CONST:
@@ -79,7 +79,7 @@ void Interpreter::eval_frame() {
 
         case CALL_FUNCTION:
             if (op_arg > 0) {
-                args = new PyList<PyObject*>();
+                args = new PyList();
                 while (op_arg--) {
                     args->set(op_arg, POP());
                 }
@@ -162,7 +162,7 @@ void Interpreter::eval_frame() {
             fo->set_globals(_frame->globals());
             
             if (op_arg & 0x01) {
-                fo->set_defaults((PyList<PyObject*>*)POP());
+                fo->set_defaults((PyList*)POP());
             }
 
             PUSH(fo);
@@ -215,7 +215,7 @@ void Interpreter::eval_frame() {
 
         case CALL_METHOD:
             if (op_arg > 0) {
-                args = new PyList<PyObject*>();
+                args = new PyList();
                 while (op_arg--) {
                     args->set(op_arg, POP());
                 }
@@ -235,13 +235,13 @@ void Interpreter::eval_frame() {
     }
 };
 
-void Interpreter::build_frame(PyObject* callable, PyList<PyObject*>* args) {
+void Interpreter::build_frame(PyObject* callable, PyList* args) {
     if (callable->klass() == NativeFunctionKlass::get_instance()) {
         PUSH(((FunctionObject*)callable)->call(args));
     } else if (callable->klass() == MethodKlass::get_instance()) {
         MethodObject* method = (MethodObject*)callable;
         if (!args) {
-            args = new PyList<PyObject*>();
+            args = new PyList();
         }
         args->add(method->owner());
         build_frame(method->func(), args);
