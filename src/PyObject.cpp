@@ -83,3 +83,7 @@ PyObject* PyObject::len(PyObject* args) {
 PyObject* PyObject::print(PyObject* args) {
     return klass()->print(this);
 }
+
+PyObject* PyObject::subscr(PyObject* x) {
+    return klass()->subscr(this, x);
+}

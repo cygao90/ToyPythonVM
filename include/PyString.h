@@ -26,6 +26,7 @@ public:
 
     virtual PyObject* len(PyObject* x);
     virtual PyObject* print(PyObject* x);
+    virtual PyObject* subscr(PyObject* x, PyObject* y);
 };
 
 class PyString : public PyObject {

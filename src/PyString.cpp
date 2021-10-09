@@ -205,3 +205,10 @@ PyObject* StringKlass::print(PyObject* x) {
     printf("%s", ((PyString*)x)->value().c_str());
     return NULL;
 }
+
+PyObject* StringKlass::subscr(PyObject* x, PyObject* y) {
+    assert(x && x->klass() == (Klass*)this);
+    assert(y && y->klass() == (Klass*)IntegerKlass::get_instance());
+
+    return new PyString(((PyString*)x)->value().substr(((PyInteger*)y)->value(), 1));
+}

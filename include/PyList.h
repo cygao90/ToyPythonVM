@@ -4,7 +4,21 @@
 #include "PyObject.h"
 #include "ArrayList.h"
 
+class ListKlass : public Klass {
+private:
+    ListKlass();
+    static ListKlass* _instance;
+
+public:
+    static ListKlass* get_instace();
+
+    virtual PyObject* print(PyObject* args);
+    virtual PyObject* subscr(PyObject* x, PyObject* y);
+};
+
 class PyList : public PyObject {
+friend class ListKlass;
+
 private:
     ArrayList<PyObject*>* _inner_list;
 

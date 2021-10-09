@@ -228,6 +228,21 @@ void Interpreter::eval_frame() {
             }
             break;
 
+        case BUILD_LIST: {
+            PyList* lst = new PyList();
+            while (op_arg--) {
+                lst->set(op_arg, POP());
+            }
+            PUSH(lst);
+            break;
+        }
+
+        case BINARY_SUBSCR:
+            v = POP(); // sub
+            w = POP(); // container
+            PUSH(w->subscr(v));
+            break;
+
         default:
             cerr << "Not implemented\n";
             exit(-1);

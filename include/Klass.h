@@ -43,6 +43,7 @@ public:
 
     virtual PyObject* len(PyObject* args)              { return NULL; }
     virtual PyObject* print(PyObject* args)            { return NULL; }
+    virtual PyObject* subscr(PyObject* x, PyObject* y) { return NULL; }
 };
 
 #endif

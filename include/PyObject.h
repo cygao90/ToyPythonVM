@@ -33,6 +33,7 @@ public:
 
     PyObject* len(PyObject* args);
     PyObject* print(PyObject* args);
+    PyObject* subscr(PyObject* x);
 };
 
 #endif
