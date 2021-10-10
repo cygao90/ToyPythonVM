@@ -23,6 +23,8 @@ public:
     virtual PyObject* ne(PyObject* x, PyObject* y);     
     virtual PyObject* gt(PyObject* x, PyObject* y);     
     virtual PyObject* ge(PyObject* x, PyObject* y);     
+    virtual PyObject* in(PyObject* x, PyObject* y);     
+    virtual PyObject* not_in(PyObject* x, PyObject* y);
 
     virtual PyObject* len(PyObject* x);
     virtual PyObject* print(PyObject* x);

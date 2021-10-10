@@ -197,12 +197,34 @@ PyObject* StringKlass::add(PyObject* x, PyObject* y) {
 //     return new PyString(ix->value() % iy->value());
 // } 
 
+PyObject* StringKlass::in(PyObject* x, PyObject* y) {
+    assert(x && x->klass() == (Klass*)this);
+    assert(y && y->klass() == StringKlass::get_instance());
+
+    PyString* sx = (PyString*)x;
+    PyString* sy = (PyString*)y;
+
+    if (sx->value().find(sy->value()) == string::npos) {
+        return Universe::Py_False;
+    } else {
+        return Universe::Py_True;
+    }
+}
+
+PyObject* StringKlass::not_in(PyObject* x, PyObject* y) {
+    if (in(x, y) == Universe::Py_False) {
+        return Universe::Py_True;
+    } else {
+        return Universe::Py_False;
+    }
+}
+
 PyObject* StringKlass::len(PyObject* x) {
     return new PyInteger(((PyString*)x)->length());
 }
 
 PyObject* StringKlass::print(PyObject* x) {
-    printf("%s", ((PyString*)x)->value().c_str());
+    printf("\'%s\'", ((PyString*)x)->value().c_str());
     return NULL;
 }
 

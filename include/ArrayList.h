@@ -2,6 +2,7 @@
 #define ARRAY_LIST_H
 
 #include <vector>
+#include "Universe.h"
 
 using std::vector;
 
@@ -37,7 +38,7 @@ T& ArrayList<T>::get(int index) {
 template<typename T>
 void ArrayList<T>::set(int index, T t) {
     while (index >= size()) {
-       add(NULL); 
+       add(Universe::Py_None); 
     }
     _array.at(index) = t;
 }

@@ -12,6 +12,9 @@ private:
 public:
     static ListKlass* get_instace();
 
+    virtual PyObject* in(PyObject* x, PyObject* y);
+    virtual PyObject* not_in(PyObject* x, PyObject* y);
+
     virtual PyObject* print(PyObject* args);
     virtual PyObject* subscr(PyObject* x, PyObject* y);
 };
@@ -32,6 +35,9 @@ public:
     PyObject* pop()                    { return _inner_list->pop(); }
     void set(int index, PyObject* obj) { _inner_list->set(index, obj); }
     PyObject*& top()                    { return _inner_list->top(); }
+    void insert(int index, PyObject* obj) { return _inner_list->insert(index, obj); }
 };
+
+PyObject* append(PyList* args);
 
 #endif

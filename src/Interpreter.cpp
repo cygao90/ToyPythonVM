@@ -131,6 +131,18 @@ void Interpreter::eval_frame() {
             case cmp_op::PyCmp_GE:
                 PUSH(v->ge(w));
                 break;
+
+            case cmp_op::PyCmp_IN:
+                PUSH(w->in(v));
+                break;
+
+            case cmp_op::PyCmp_NOT_IN:
+                PUSH(w->not_in(v));
+                break;
+
+            default:
+                cerr << "op not implemented" << op_arg << "\n";
+                exit(-1);
             }
             break;
         
@@ -258,7 +270,7 @@ void Interpreter::build_frame(PyObject* callable, PyList* args) {
         if (!args) {
             args = new PyList();
         }
-        args->add(method->owner());
+        args->insert(0, method->owner());
         build_frame(method->func(), args);
     } else {
         FrameObject* frame = new FrameObject((FunctionObject*)callable, args);
